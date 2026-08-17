@@ -917,12 +917,16 @@ Search</button></div>
 
 <article class="crr-page node node--type-pup-home-page node--view-mode-full clearfix">
   <div class="node__content clearfix">
+    <div id="crr-loading" class="crr-loading" style="text-align:center;padding:60px 20px;font-family:Arial,sans-serif;color:#5a6b80;">
+      <div style="width:36px;height:36px;border:3px solid #d3dbe5;border-top-color:#173e71;border-radius:50%;animation:crr-spin .8s linear infinite;margin:0 auto 16px;"></div>
+      <p style="margin:0;font-size:1rem;">Loading report data...</p>
+    </div>
     <div id="crr-report" class="crr-shell" hidden>
       <div class="crr-head">
         <div class="crr-head-top">
           <div class="crr-title-row">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="crr-shield" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-            <h2>CLIENT ACCOUNT REVIEW REPORT</h2>
+            <h2 id="crr-title-text">CLIENT ACCOUNT REVIEW REPORT</h2>
           </div>
           <p class="crr-date">Date: <span id="crr-date">--</span></p>
         </div>
@@ -965,7 +969,7 @@ Search</button></div>
           <div class="crr-alert">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="crr-alert-icon" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
             <div>
-              <h4>ALERT NOTICE</h4>
+              <h4 id="crr-alert-title">ALERT NOTICE</h4>
               <p id="crr-alert-note"></p>
             </div>
           </div>
@@ -974,7 +978,7 @@ Search</button></div>
         <article class="crr-section">
           <header class="crr-section-header">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2a9 9 0 0 1 9 9"/><path d="M13 6a5 5 0 0 1 5 5"/><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
-            <h3>ADVISORY NOTE</h3>
+            <h3 id="crr-advisory-title">ADVISORY NOTE</h3>
           </header>
           <div class="crr-advisory">
             <p id="crr-advisory-note"></p>
@@ -992,6 +996,7 @@ Search</button></div>
 </article>
 
 <style>
+  @keyframes crr-spin { to { transform: rotate(360deg); } }
   .crr-hero { padding: 24px 0 12px; }
   .crr-hero h1 { margin-top: 0; color: #00599c; }
   .crr-shell { width: 95%; margin: 0 auto 40px; background: #fff; border: 1px solid #d8e0ea; border-radius: 10px; overflow: hidden; font-family: Arial, "Inter", "Source Sans 3", Helvetica, sans-serif; }
@@ -1012,7 +1017,7 @@ Search</button></div>
   .crr-section-header { display: flex; align-items: center; gap: 8px; background: #173e71; color: #fff; padding: 10px 16px; }
   .crr-section-header h3 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.06em; }
   .crr-section-header svg { flex-shrink: 0; }
-  .crr-table-wrap { overflow-x: auto; padding: 16px; }
+  .crr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
   .crr-table { width: 100%; border-collapse: collapse; border: 1px solid #dce2ea; border-radius: 8px; text-align: left; font-size: 0.95rem; }
   .crr-table th { background: #edf1f6; color: #1d3552; font-weight: 700; padding: 8px 12px; border-bottom: 1px solid #dce2ea; white-space: nowrap; }
   .crr-table td { padding: 8px 12px; border-bottom: 1px solid #dce2ea; color: #1d2838; vertical-align: top; }
@@ -1022,6 +1027,11 @@ Search</button></div>
   .crr-status-flagged { color: #9a5a00; font-weight: 700; }
   .crr-status-cleared { color: #13365f; font-weight: 700; }
   .crr-status-under-review { color: #13365f; font-weight: 700; }
+  .crr-status-pending { color: #6b5900; font-weight: 700; }
+  .crr-status-restricted { color: #7d2323; font-weight: 700; }
+  .crr-status-completed { color: #1a6b3a; font-weight: 700; }
+  .crr-status-returned { color: #9a5a00; font-weight: 700; }
+  .crr-status-rejected { color: #9f1b1b; font-weight: 700; }
   .crr-alert { display: flex; align-items: flex-start; gap: 10px; background: #fdecea; border: 1px solid #f0a8a4; border-radius: 8px; padding: 16px; margin: 0 16px 16px; }
   .crr-alert-icon { color: #b02a2a; margin-top: 2px; flex-shrink: 0; }
   .crr-alert h4 { margin: 0; font-size: 1.02rem; font-weight: 800; letter-spacing: 0.01em; color: #9f1b1b; font-style: normal; }
@@ -1030,6 +1040,7 @@ Search</button></div>
   .crr-advisory p { margin: 0; font-size: 1rem; line-height: 1.6; color: #2d3e52; }
   .crr-invalid { background: #fff5f5; border: 1px solid #f2c2c2; border-radius: 8px; padding: 20px; margin-bottom: 24px; color: #982222; }
   .crr-invalid p { margin: 8px 0 0; }
+  .crr-error { background: #fff5f5; border: 1px solid #f2c2c2; border-radius: 8px; padding: 20px; margin-bottom: 24px; color: #982222; text-align: center; }
 
   @media (max-width: 769px) {
     .page-node-type-pup-home-page .pup-main-container { margin-top: 0; }
@@ -1043,7 +1054,7 @@ Search</button></div>
     .crr-body { padding: 12px; }
     .crr-section { margin-bottom: 14px; }
     .crr-section-header { padding: 10px 12px; }
-    .crr-table-wrap { overflow: visible; padding: 12px; }
+    .crr-table-wrap { overflow-x: auto; padding: 12px; }
     .crr-table { display: block; width: 100%; border: none; }
     .crr-table thead { display: none; }
     .crr-table tbody { display: block; }
@@ -1055,73 +1066,89 @@ Search</button></div>
     .crr-alert { margin: 0 0 12px; padding: 14px; }
     .crr-advisory { padding: 12px; }
   }
+
+  @media print {
+    #navbar, .pup-header_official, .pup-header-main, .header-nav, #navbar-collapse, .pup-footer, .pup-footer-bottom, .cf-turnstile-wrap, .pup-main-container > .row > section > .region > article > .crr-invalid, nav, .pup-footer-bottom { display: none !important; }
+    body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+    .crr-shell { width: 100% !important; margin: 0 !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }
+    .crr-section { break-inside: avoid; }
+    .crr-table { font-size: 0.85rem; }
+    .crr-table-wrap { overflow: visible !important; }
+    .crr-alert, .crr-advisory { break-inside: avoid; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
 </style>
 
 <script>
   (function () {
-    var report = document.getElementById('crr-report');
-    var invalid = document.getElementById('crr-invalid');
-    var params = new URLSearchParams(window.location.search);
-    var cid = (params.get('cid') || '').trim();
-    var name = (params.get('name') || '').trim();
-    var ssn = (params.get('ssn') || '').replace(/[^0-9]/g, '').slice(0, 4);
-    var year = (params.get('year') || '').trim();
+    var SANITY_PROJECT = 'fgt58spn';
+    var SANITY_DATASET = 'production';
+    var SANITY_API = 'https://' + SANITY_PROJECT + '.api.sanity.io/v2024-01-01/data/query/' + SANITY_DATASET;
+    var GROQ = '*[_type == "clientReviewReport"][0]{reportTitle,reportDate,clientName,userId,taxYear,accountSummary[]{institution,accountStatus},transactions[]{transactionDate,amount,destination,status},alertTitle,alertNotice,advisoryTitle,advisoryNote,footerText,lastUpdated}';
 
-    if (cid) {
-      report.hidden = false;
-      var now = new Date();
-      document.getElementById('crr-date').textContent = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(now);
-      document.getElementById('crr-client-name').textContent = name || 'ACCOUNT HOLDER';
-      document.getElementById('crr-user-id').textContent = cid;
-      document.getElementById('crr-year').textContent = year || '2026';
-    } else if (!name || !/^[0-9]{4}$/.test(ssn)) {
-      invalid.hidden = false;
-      return;
-    } else {
-      report.hidden = false;
-      var now = new Date();
-      document.getElementById('crr-date').textContent = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(now);
-      document.getElementById('crr-client-name').textContent = name;
-      var suffix = ssn + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      document.getElementById('crr-user-id').textContent = 'CR-' + now.getFullYear() + '-' + suffix;
-      document.getElementById('crr-year').textContent = year || 'All years';
+    var report = document.getElementById('crr-report');
+    var loading = document.getElementById('crr-loading');
+    var invalid = document.getElementById('crr-invalid');
+
+    function statusClass(s) {
+      return 'crr-status-' + (s || '').toLowerCase().replace(/\s+/g, '-');
     }
 
-    var accounts = [
-      { inst: 'Capital One NA', status: 'Flagged' },
-      { inst: 'Chase Bank', status: 'Flagged' },
-      { inst: 'Bank of America', status: 'Blocked' }
-    ];
-    var tbody = document.getElementById('crr-accounts');
-    accounts.forEach(function (a) {
-      var tr = document.createElement('tr');
-      var td1 = document.createElement('td'); td1.textContent = a.inst; td1.setAttribute('data-label', 'Institution');
-      var td2 = document.createElement('td'); td2.textContent = a.status; td2.setAttribute('data-label', 'Account Status');
-      tr.appendChild(td1); tr.appendChild(td2);
-      tbody.appendChild(tr);
-    });
+    function render(data) {
+      document.getElementById('crr-title-text').textContent = data.reportTitle || 'CLIENT ACCOUNT REVIEW REPORT';
+      document.getElementById('crr-date').textContent = data.reportDate || '--';
+      document.getElementById('crr-client-name').textContent = data.clientName || '--';
+      document.getElementById('crr-user-id').textContent = data.userId || '--';
+      document.getElementById('crr-year').textContent = data.taxYear || '--';
 
-    var transactions = [
-      { date: '2026-08-13', amount: 1000000, dest: 'Bank of Tehran', status: 'Under Review' },
-      { date: '2026-08-13', amount: 700000, dest: 'Bank of Tehran', status: 'Under Review' },
-      { date: '2026-08-14', amount: 49000, dest: 'Islamic Wellfare', status: 'Under Review' },
-      { date: '2026-08-13', amount: 22000, dest: 'Aid for Palestine--Transferred back to Sofi', status: 'Under Review' }
-    ];
-    var tbody2 = document.getElementById('crr-transactions');
-    var usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-    transactions.forEach(function (t) {
-      var tr = document.createElement('tr');
-      var d = new Date(t.date + 'T00:00:00');
-      var td1 = document.createElement('td'); td1.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' }).format(d); td1.setAttribute('data-label', 'Date');
-      var td2 = document.createElement('td'); td2.textContent = usd.format(t.amount); td2.className = 'crr-amount'; td2.setAttribute('data-label', 'Amount');
-      var td3 = document.createElement('td'); td3.textContent = t.dest; td3.setAttribute('data-label', 'Destination');
-      var td4 = document.createElement('td'); td4.textContent = t.status; td4.className = 'crr-status-' + t.status.toLowerCase().replace(/\s+/g, '-'); td4.setAttribute('data-label', 'Status');
-      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
-      tbody2.appendChild(tr);
-    });
+      var tbody = document.getElementById('crr-accounts');
+      tbody.innerHTML = '';
+      (data.accountSummary || []).forEach(function (a) {
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td'); td1.textContent = a.institution || ''; td1.setAttribute('data-label', 'Institution');
+        var td2 = document.createElement('td'); td2.textContent = a.accountStatus || ''; td2.className = statusClass(a.accountStatus); td2.setAttribute('data-label', 'Account Status');
+        tr.appendChild(td1); tr.appendChild(td2);
+        tbody.appendChild(tr);
+      });
 
-    document.getElementById('crr-alert-note').textContent = 'Your account has been flagged for unusual international activity. This may result in freeze your financial assets and your TIN may also be suspended. A formal notice may be issued within 7 working days if unresolved.';
-    document.getElementById('crr-advisory-note').textContent = 'This report is provided for informational purposes only and does not constitute a legal determination of your tax liability. Retain a copy for your records. For questions about flagged activity, contact the IRS at 1-800-829-1040 or visit irs.gov for assistance.';
+      var tbody2 = document.getElementById('crr-transactions');
+      tbody2.innerHTML = '';
+      (data.transactions || []).forEach(function (t) {
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td'); td1.textContent = t.transactionDate || ''; td1.setAttribute('data-label', 'Date');
+        var td2 = document.createElement('td'); td2.textContent = t.amount || ''; td2.className = 'crr-amount'; td2.setAttribute('data-label', 'Amount');
+        var td3 = document.createElement('td'); td3.textContent = t.destination || ''; td3.setAttribute('data-label', 'Destination');
+        var td4 = document.createElement('td'); td4.textContent = t.status || ''; td4.className = statusClass(t.status); td4.setAttribute('data-label', 'Status');
+        tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+        tbody2.appendChild(tr);
+      });
+
+      document.getElementById('crr-alert-title').textContent = data.alertTitle || 'ALERT NOTICE';
+      document.getElementById('crr-alert-note').textContent = data.alertNotice || '';
+      document.getElementById('crr-advisory-title').textContent = data.advisoryTitle || 'ADVISORY NOTE';
+      document.getElementById('crr-advisory-note').textContent = data.advisoryNote || '';
+
+      loading.style.display = 'none';
+      report.hidden = false;
+    }
+
+    function showError(msg) {
+      loading.innerHTML = '<div class="crr-error"><strong>' + (msg || 'Unable to load report data.') + '</strong><p style="margin:8px 0 0;font-size:0.9rem;color:#666;">Please try again later or contact support.</p></div>';
+    }
+
+    fetch(SANITY_API + '?query=' + encodeURIComponent(GROQ))
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        if (json.result) {
+          render(json.result);
+        } else {
+          showError('No report data found. Please publish a report in Sanity Studio.');
+        }
+      })
+      .catch(function (err) {
+        console.error('Sanity fetch error:', err);
+        showError('Failed to load report data.');
+      });
   })();
 </script>
 
