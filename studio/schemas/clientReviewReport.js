@@ -2,7 +2,6 @@ export default {
   name: 'clientReviewReport',
   title: 'Client Account Review Report',
   type: 'document',
-  __experimental_actions: ['update', 'publish', 'discardChanges'],
   fields: [
     {
       name: 'reportTitle',

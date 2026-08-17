@@ -8,6 +8,15 @@ export default defineConfig({
   projectId: 'fgt58spn',
   dataset: 'production',
   plugins: [structureTool()],
+  document: {
+    actions: (prev) =>
+      prev.filter(
+        (action) =>
+          action.action === 'publish' ||
+          action.action === 'discardChanges' ||
+          action.action === 'restore'
+      ),
+  },
   schema: {
     types: schemaTypes,
   },
