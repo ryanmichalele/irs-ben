@@ -1,6 +1,6 @@
 export default {
   api: {
-    projectId: '40qhs8fu',
+    projectId: 'bqoaqpb3',
     dataset: 'production',
   },
   studioHost: 'irs-ben-studio',

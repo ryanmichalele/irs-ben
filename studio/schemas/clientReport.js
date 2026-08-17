@@ -1,6 +1,6 @@
 export default {
   name: 'clientReport',
-  title: 'Client Report',
+  title: 'Client Account Review',
   type: 'document',
   groups: [
     { name: 'info', title: 'Report Information', default: true },

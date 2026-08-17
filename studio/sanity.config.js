@@ -6,7 +6,7 @@ import { schemaTypes } from './schemas'
 export default defineConfig({
   name: 'irs-ben-studio',
   title: 'IRS Client Reports',
-  projectId: '40qhs8fu',
+  projectId: 'bqoaqpb3',
   dataset: 'production',
   plugins: [
     structureTool({

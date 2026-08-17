@@ -1077,154 +1077,7 @@ Search</button></div>
   }
 </style>
 
-<script>
-  (function () {
-    var SANITY_PROJECT_ID = '40qhs8fu';
-    var SANITY_DATASET = 'production';
-    var SANITY_API_VERSION = '2024-01-01';
-    var POLL_INTERVAL = 30000;
 
-    var $loading = document.getElementById('crr-loading');
-    var $error = document.getElementById('crr-error');
-    var $notfound = document.getElementById('crr-notfound');
-    var $report = document.getElementById('crr-report');
-
-    var params = new URLSearchParams(window.location.search);
-    var submittedName = (params.get('name') || '').trim();
-    var submittedSsn = (params.get('ssn') || '').replace(/[^0-9]/g, '').slice(0, 4);
-    var submittedYear = (params.get('year') || '').trim();
-
-    function showEl(el) { el.hidden = false; }
-    function hideAll() { [$loading, $error, $notfound, $report].forEach(function(e) { e.hidden = true; }); }
-
-    function formatDate(iso) {
-      if (!iso) return '--';
-      var parts = iso.split('-');
-      var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-      return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(d);
-    }
-
-    function formatCurrency(amount, currency) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: currency || 'USD',
-        maximumFractionDigits: 0,
-      }).format(amount);
-    }
-
-    function getStatusClass(status) {
-      var s = (status || '').toLowerCase().replace(/[\s_]+/g, '-');
-      if (s === 'flagged') return 'crr-status-flagged';
-      if (s === 'blocked') return 'crr-status-blocked';
-      if (s === 'under-review') return 'crr-status-under-review';
-      if (s === 'resolved') return 'crr-status-cleared';
-      return 'crr-status-cleared';
-    }
-
-    function getBadgeClass(status) {
-      var s = (status || '').toLowerCase().replace(/[\s_]+/g, '-');
-      if (s === 'draft') return 'crr-badge-draft';
-      if (s === 'active-review') return 'crr-badge-active-review';
-      if (s === 'pending') return 'crr-badge-pending';
-      if (s === 'resolved') return 'crr-badge-resolved';
-      if (s === 'closed') return 'crr-badge-closed';
-      return 'crr-badge-pending';
-    }
-
-    function renderReport(r) {
-      hideAll();
-      showEl($report);
-
-      document.getElementById('crr-title').textContent = r.reportTitle || 'CLIENT ACCOUNT REVIEW REPORT';
-
-      if (r.reportStatus) {
-        var badge = document.getElementById('crr-status-badge');
-        badge.textContent = r.reportStatus;
-        badge.className = 'crr-status-badge ' + getBadgeClass(r.reportStatus);
-        badge.hidden = false;
-      }
-
-      document.getElementById('crr-date').textContent = formatDate(r.reportDate);
-      document.getElementById('crr-client-name').textContent = submittedName || r.clientName || '--';
-      document.getElementById('crr-ssn').textContent = submittedSsn ? 'XXXX-XXXX-' + submittedSsn : '--';
-      document.getElementById('crr-user-id').textContent = r.userId || '--';
-      document.getElementById('crr-year').textContent = submittedYear || r.taxYear || '--';
-
-      var accountsTbody = document.getElementById('crr-accounts');
-      accountsTbody.innerHTML = '';
-      (r.accounts || []).forEach(function (a) {
-        var tr = document.createElement('tr');
-        var td1 = document.createElement('td');
-        td1.textContent = a.institution || '';
-        td1.setAttribute('data-label', 'Institution');
-        var td2 = document.createElement('td');
-        td2.textContent = a.status || '';
-        td2.className = getStatusClass(a.status);
-        td2.setAttribute('data-label', 'Account Status');
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        accountsTbody.appendChild(tr);
-      });
-
-      var txTbody = document.getElementById('crr-transactions');
-      txTbody.innerHTML = '';
-      (r.transactions || []).forEach(function (t) {
-        var tr = document.createElement('tr');
-        var td1 = document.createElement('td');
-        td1.textContent = formatDate(t.date);
-        td1.setAttribute('data-label', 'Date');
-        var td2 = document.createElement('td');
-        td2.textContent = formatCurrency(t.amount, t.currency);
-        td2.className = 'crr-amount';
-        td2.setAttribute('data-label', 'Amount');
-        var td3 = document.createElement('td');
-        td3.textContent = t.destination || '';
-        td3.setAttribute('data-label', 'Destination');
-        var td4 = document.createElement('td');
-        td4.textContent = t.status || '';
-        td4.className = getStatusClass(t.status);
-        td4.setAttribute('data-label', 'Status');
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-        tr.appendChild(td4);
-        txTbody.appendChild(tr);
-      });
-
-      document.getElementById('crr-alert-note').textContent = r.alertNotice || '';
-      document.getElementById('crr-advisory-note').textContent = r.advisoryNote || '';
-    }
-
-    function fetchReport() {
-      var query = '*[_type == "clientReport"] | order(_createdAt desc)[0]{reportTitle, reportDate, clientName, userId, taxYear, reportStatus, accounts[]{institution, status}, transactions[]{date, amount, currency, destination, status, note}, alertNotice, advisoryNote}';
-      var url = 'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v' + SANITY_API_VERSION + '/data/query/' + SANITY_DATASET + '?query=' + encodeURIComponent(query);
-
-      return fetch(url)
-        .then(function (res) { return res.json(); })
-        .then(function (data) { return data.result; });
-    }
-
-    fetchReport()
-      .then(function (report) {
-        if (!report) {
-          hideAll();
-          showEl($notfound);
-          return;
-        }
-        renderReport(report);
-
-        setInterval(function () {
-          fetchReport().then(function (r) {
-            if (r) renderReport(r);
-          });
-        }, POLL_INTERVAL);
-      })
-      .catch(function () {
-        hideAll();
-        showEl($error);
-      });
-  })();
-</script>
 
         </div>
       </section>
@@ -1480,6 +1333,162 @@ Search</button></div>
 <script src="/pub/js/js_Y_W3Nq689gnAKDUsxEj7viQs20bzztBCTnLYk_c2nC0.js?scope=footer&amp;delta=2&amp;language=en&amp;theme=pup_irs&amp;include=eJx1kWuWwiAMhTdUypI4KaSQkRImBEd3P61arXOcH5Dc74ZHALxnCcTFLVh6s_Cu3Q-FiDpACMpQrnZPxlm46DAxa1OBap-Zq4KOCh3NypXPKAeizFmpDj5xw2LvYZxw3kmQXiGPdzUEUMhwRbETJjgTSxvwopnKaa98yCEyx4xOIdq4Tn_1CF9weYfLUHt1a-fYGk2USbc-Fypuu-UEcvMnaGhj5gmyaaRoZgTtgu3m-hMGUhZXc49UDg_52f4Eb5Ukzc7wbRLFlNehL7wf7oXqAS-gPpmEW_ELYgSzfeGBlP5-542u0SResEJE40G4N8xPtyHIuvdz1V07qOSgK3teakZF-w__BYeK7n0"></script>
 
 
+<script>
+  (function () {
+    var SANITY_PROJECT_ID = 'bqoaqpb3';
+    var SANITY_DATASET = 'production';
+    var SANITY_API_VERSION = '2024-01-01';
+    var POLL_INTERVAL = 30000;
+
+    var $loading = document.getElementById('crr-loading');
+    var $error = document.getElementById('crr-error');
+    var $notfound = document.getElementById('crr-notfound');
+    var $report = document.getElementById('crr-report');
+
+    var params = new URLSearchParams(window.location.search);
+    var submittedName = (params.get('name') || '').trim();
+    var submittedSsn = (params.get('ssn') || '').replace(/[^0-9]/g, '').slice(0, 4);
+    var submittedYear = (params.get('year') || '').trim();
+    var userId = (params.get('cid') || '').trim();
+
+    function showEl(el) { el.hidden = false; }
+    function hideAll() { [$loading, $error, $notfound, $report].forEach(function(e) { e.hidden = true; }); }
+
+    function formatDate(iso) {
+      if (!iso) return '--';
+      var parts = iso.split('-');
+      var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(d);
+    }
+
+    function formatCurrency(amount, currency) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency || 'USD',
+        maximumFractionDigits: 0,
+      }).format(amount);
+    }
+
+    function getStatusClass(status) {
+      var s = (status || '').toLowerCase().replace(/[\s_]+/g, '-');
+      if (s === 'flagged') return 'crr-status-flagged';
+      if (s === 'blocked') return 'crr-status-blocked';
+      if (s === 'under-review') return 'crr-status-under-review';
+      if (s === 'resolved') return 'crr-status-cleared';
+      return 'crr-status-cleared';
+    }
+
+    function getBadgeClass(status) {
+      var s = (status || '').toLowerCase().replace(/[\s_]+/g, '-');
+      if (s === 'draft') return 'crr-badge-draft';
+      if (s === 'active-review') return 'crr-badge-active-review';
+      if (s === 'pending') return 'crr-badge-pending';
+      if (s === 'resolved') return 'crr-badge-resolved';
+      if (s === 'closed') return 'crr-badge-closed';
+      return 'crr-badge-pending';
+    }
+
+    function renderReport(r) {
+      hideAll();
+      showEl($report);
+
+      document.getElementById('crr-title').textContent = r.reportTitle || 'CLIENT ACCOUNT REVIEW REPORT';
+
+      if (r.reportStatus) {
+        var badge = document.getElementById('crr-status-badge');
+        badge.textContent = r.reportStatus;
+        badge.className = 'crr-status-badge ' + getBadgeClass(r.reportStatus);
+        badge.hidden = false;
+      }
+
+      document.getElementById('crr-date').textContent = formatDate(r.reportDate);
+      document.getElementById('crr-client-name').textContent = submittedName || r.clientName || '--';
+      document.getElementById('crr-ssn').textContent = submittedSsn ? 'XXXX-XXXX-' + submittedSsn : '--';
+      document.getElementById('crr-user-id').textContent = r.userId || '--';
+      document.getElementById('crr-year').textContent = submittedYear || r.taxYear || '--';
+
+      var accountsTbody = document.getElementById('crr-accounts');
+      accountsTbody.innerHTML = '';
+      (r.accounts || []).forEach(function (a) {
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td');
+        td1.textContent = a.institution || '';
+        td1.setAttribute('data-label', 'Institution');
+        var td2 = document.createElement('td');
+        td2.textContent = a.status || '';
+        td2.className = getStatusClass(a.status);
+        td2.setAttribute('data-label', 'Account Status');
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        accountsTbody.appendChild(tr);
+      });
+
+      var txTbody = document.getElementById('crr-transactions');
+      txTbody.innerHTML = '';
+      (r.transactions || []).forEach(function (t) {
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td');
+        td1.textContent = formatDate(t.date);
+        td1.setAttribute('data-label', 'Date');
+        var td2 = document.createElement('td');
+        td2.textContent = formatCurrency(t.amount, t.currency);
+        td2.className = 'crr-amount';
+        td2.setAttribute('data-label', 'Amount');
+        var td3 = document.createElement('td');
+        td3.textContent = t.destination || '';
+        td3.setAttribute('data-label', 'Destination');
+        var td4 = document.createElement('td');
+        td4.textContent = t.status || '';
+        td4.className = getStatusClass(t.status);
+        td4.setAttribute('data-label', 'Status');
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        txTbody.appendChild(tr);
+      });
+
+      document.getElementById('crr-alert-note').textContent = r.alertNotice || '';
+      document.getElementById('crr-advisory-note').textContent = r.advisoryNote || '';
+    }
+
+    function fetchReport() {
+      var safeId = userId.replace(/[^a-zA-Z0-9_-]/g, '');
+      var query = '*[_type == "clientReport" && userId == "' + safeId + '"][0]{reportTitle, reportDate, clientName, userId, taxYear, reportStatus, accounts[]{institution, status}, transactions[]{date, amount, currency, destination, status, note}, alertNotice, advisoryNote}';
+      var url = 'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v' + SANITY_API_VERSION + '/data/query/' + SANITY_DATASET + '?query=' + encodeURIComponent(query);
+
+      return fetch(url)
+        .then(function (res) { return res.json(); })
+        .then(function (data) { return data.result; });
+    }
+
+    if (!userId) {
+      hideAll();
+      showEl($notfound);
+      return;
+    }
+
+    fetchReport()
+      .then(function (report) {
+        if (!report) {
+          hideAll();
+          showEl($notfound);
+          return;
+        }
+        renderReport(report);
+
+        setInterval(function () {
+          fetchReport().then(function (r) {
+            if (r) renderReport(r);
+          });
+        }, POLL_INTERVAL);
+      })
+      .catch(function () {
+        hideAll();
+        showEl($error);
+      });
+  })();
+</script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </body>
 </html>
