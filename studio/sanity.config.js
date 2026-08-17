@@ -1,5 +1,5 @@
 import { defineConfig } from 'sanity';
-import { deskTool } from 'sanity/desk';
+import { structureTool } from 'sanity/structure';
 import { schemaTypes } from './schemas';
 
 export default defineConfig({
@@ -7,22 +7,7 @@ export default defineConfig({
   title: 'IRS BEN Studio',
   projectId: 'fgt58spn',
   dataset: 'production',
-  plugins: [
-    deskTool({
-      structure: (S) =>
-        S.list()
-          .title('Content')
-          .items([
-            S.listItem()
-              .title('Client Account Review Report')
-              .child(
-                S.document()
-                  .schemaType('clientReviewReport')
-                  .documentId('singleton-clientReviewReport')
-              ),
-          ]),
-    }),
-  ],
+  plugins: [structureTool()],
   schema: {
     types: schemaTypes,
   },
