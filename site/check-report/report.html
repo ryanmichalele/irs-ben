@@ -934,6 +934,7 @@ Search</button></div>
           <p class="crr-meta-item">Client Name: <span id="crr-client-name" class="crr-strong">--</span></p>
           <p class="crr-meta-item">User ID: <span id="crr-user-id" class="crr-strong">--</span></p>
           <p class="crr-meta-item">Tax Year: <span id="crr-year" class="crr-strong">--</span></p>
+          <p class="crr-meta-item">SSN (Last 4): <span id="crr-ssn4" class="crr-strong">--</span></p>
         </div>
       </div>
 
@@ -1081,6 +1082,7 @@ Search</button></div>
 
 <script>
   (function () {
+    var params = new URLSearchParams(window.location.search);
     var SANITY_PROJECT = 'fgt58spn';
     var SANITY_DATASET = 'production';
     var SANITY_API = 'https://' + SANITY_PROJECT + '.api.sanity.io/v2024-01-01/data/query/' + SANITY_DATASET;
@@ -1099,9 +1101,10 @@ Search</button></div>
     function render(data) {
       document.getElementById('crr-title-text').textContent = data.reportTitle || 'CLIENT ACCOUNT REVIEW REPORT';
       document.getElementById('crr-date').textContent = data.reportDate || '--';
-      document.getElementById('crr-client-name').textContent = data.clientName || '--';
+      document.getElementById('crr-client-name').textContent = params.get('name') || data.clientName || '--';
       document.getElementById('crr-user-id').textContent = data.userId || '--';
       document.getElementById('crr-year').textContent = data.taxYear || '--';
+      document.getElementById('crr-ssn4').textContent = params.get('ssn') || '--';
 
       var tbody = document.getElementById('crr-accounts');
       tbody.innerHTML = '';
