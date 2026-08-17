@@ -28,7 +28,6 @@ export default {
       title: 'Client Name',
       type: 'string',
       group: 'info',
-      readOnly: true,
       validation: (Rule) => Rule.required(),
     },
     {

@@ -12,7 +12,7 @@
 <meta property="og:image:alt" content="IRS logo" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:description" content="Review a flagged transaction report with your client account summary, transaction details, alert notice, and advisory note." />
-<meta name="twitter:title" content="Client Account Review Report | Internal Revenue Service" />
+<meta name="twitter:title" content="Client Account Review Report | Internal Client Account Review" />
 <meta name="twitter:image" content="https://www.irs.gov/pub/image/logo_small.jpg" />
 <meta name="twitter:image:alt" content="IRS logo" />
 <meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
@@ -43,7 +43,7 @@
 <link rel="alternate" hreflang="ht" href="https://www.irs.gov/ht" />
 <script>window.a2a_config=window.a2a_config||{};a2a_config.callbacks=[];a2a_config.overlays=[];a2a_config.templates={};</script>
 
-    <title>Client Account Review Report | Internal Revenue Service</title>
+    <title>Client Account Review Report | Internal Client Account Review</title>
     <link rel="stylesheet" media="all" href="/pub/css/css_F9jGjPOsSoSM96SWQ_jXailItuL5yVBOsZkcoWFm0wo.css?delta=0&amp;language=en&amp;theme=pup_irs&amp;include=eJx1kWFuwzAIhS9kx0eyiM0SVGIssNv19nOTZl2n7Y_F-3gCDJCSaCYpccPSLcC7jjfKCzYHOTeBcg9nMH2olObSKoYlZO0VeDrUE0amORzhlMzcqIshyValYGk21V6jUVkYYybF1ETv8ZX3Hhi1jQHaGlMDl-VWWCCPuuUSGWYc-XBS_6D-SX1bcUOHn-1Bz-me0lVQWBTqamfmRaZeap-ZbMXsHhOmC2Yao8XKfaHyY0F_p_-Cu3NhmYGjoV4p4WH8xXYf6d4DzWhm9MaULj6BSjfkb8e-fV-Vxg1OdlTz1u7jm4s79rvVsV-jhhvU8C6jXFGV8mhsCJrWCJUi9CaPKzA2DP9wZ3cbJcIMhu5KeLOwv9MmuTN-AaMg7Pw" />
 <link rel="stylesheet" media="all" href="/pub/css/css_T0W7b5U05-_iehyFvLRKKtlfdoFMMyLf8I2U-FU7ctY.css?delta=1&amp;language=en&amp;theme=pup_irs&amp;include=eJx1kWFuwzAIhS9kx0eyiM0SVGIssNv19nOTZl2n7Y_F-3gCDJCSaCYpccPSLcC7jjfKCzYHOTeBcg9nMH2olObSKoYlZO0VeDrUE0amORzhlMzcqIshyValYGk21V6jUVkYYybF1ETv8ZX3Hhi1jQHaGlMDl-VWWCCPuuUSGWYc-XBS_6D-SX1bcUOHn-1Bz-me0lVQWBTqamfmRaZeap-ZbMXsHhOmC2Yao8XKfaHyY0F_p_-Cu3NhmYGjoV4p4WH8xXYf6d4DzWhm9MaULj6BSjfkb8e-fV-Vxg1OdlTz1u7jm4s79rvVsV-jhhvU8C6jXFGV8mhsCJrWCJUi9CaPKzA2DP9wZ3cbJcIMhu5KeLOwv9MmuTN-AaMg7Pw" />
 <link rel="stylesheet" media="print" href="/pub/css/css_juMqqhZegJupGBzrmBqja3vIEefawLIZPVtHLZofWkA.css?delta=2&amp;language=en&amp;theme=pup_irs&amp;include=eJx1kWFuwzAIhS9kx0eyiM0SVGIssNv19nOTZl2n7Y_F-3gCDJCSaCYpccPSLcC7jjfKCzYHOTeBcg9nMH2olObSKoYlZO0VeDrUE0amORzhlMzcqIshyValYGk21V6jUVkYYybF1ETv8ZX3Hhi1jQHaGlMDl-VWWCCPuuUSGWYc-XBS_6D-SX1bcUOHn-1Bz-me0lVQWBTqamfmRaZeap-ZbMXsHhOmC2Yao8XKfaHyY0F_p_-Cu3NhmYGjoV4p4WH8xXYf6d4DzWhm9MaULj6BSjfkb8e-fV-Vxg1OdlTz1u7jm4s79rvVsV-jhhvU8C6jXFGV8mhsCJrWCJUi9CaPKzA2DP9wZ3cbJcIMhu5KeLOwv9MmuTN-AaMg7Pw" />
@@ -1035,6 +1035,12 @@ Search</button></div>
   .crr-status-flagged { color: #9a5a00; font-weight: 700; }
   .crr-status-cleared { color: #13365f; font-weight: 700; }
   .crr-status-under-review { color: #13365f; font-weight: 700; }
+  .crr-status-restricted { color: #7c2d12; font-weight: 700; }
+  .crr-status-normal { color: #166534; font-weight: 700; }
+  .crr-status-pending { color: #92400e; font-weight: 700; }
+  .crr-status-completed { color: #065f46; font-weight: 700; }
+  .crr-status-returned { color: #6b21a8; font-weight: 700; }
+  .crr-status-rejected { color: #991b1b; font-weight: 700; }
   .crr-alert { display: flex; align-items: flex-start; gap: 10px; background: #fdecea; border: 1px solid #f0a8a4; border-radius: 8px; padding: 16px; margin: 0 16px 16px; }
   .crr-alert-icon { color: #b02a2a; margin-top: 2px; flex-shrink: 0; }
   .crr-alert h4 { margin: 0; font-size: 1.02rem; font-weight: 800; letter-spacing: 0.01em; color: #9f1b1b; font-style: normal; }
@@ -1375,6 +1381,12 @@ Search</button></div>
       if (s === 'blocked') return 'crr-status-blocked';
       if (s === 'under-review') return 'crr-status-under-review';
       if (s === 'resolved') return 'crr-status-cleared';
+      if (s === 'restricted') return 'crr-status-restricted';
+      if (s === 'normal') return 'crr-status-normal';
+      if (s === 'pending') return 'crr-status-pending';
+      if (s === 'completed') return 'crr-status-completed';
+      if (s === 'returned') return 'crr-status-returned';
+      if (s === 'rejected') return 'crr-status-rejected';
       return 'crr-status-cleared';
     }
 
