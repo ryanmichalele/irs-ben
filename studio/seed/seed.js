@@ -8,6 +8,10 @@ const client = createClient({
   useCdn: false,
 });
 
+function key() {
+  return Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+}
+
 const doc = {
   _type: 'clientReviewReport',
   _id: 'singleton-clientReviewReport',
@@ -17,15 +21,15 @@ const doc = {
   userId: 'CR-2026-9999-A1GMTQ',
   taxYear: '2026',
   accountSummary: [
-    { institution: 'Capital One NA', accountStatus: 'Flagged' },
-    { institution: 'Chase Bank', accountStatus: 'Flagged' },
-    { institution: 'Bank of America', accountStatus: 'Blocked' },
+    { _key: key(), _type: 'object', institution: 'Capital One NA', accountStatus: 'Flagged' },
+    { _key: key(), _type: 'object', institution: 'Chase Bank', accountStatus: 'Flagged' },
+    { _key: key(), _type: 'object', institution: 'Bank of America', accountStatus: 'Blocked' },
   ],
   transactions: [
-    { transactionDate: 'August 13', amount: '$1,000,000', destination: 'Bank of Tehran', status: 'Under Review' },
-    { transactionDate: 'August 13', amount: '$700,000', destination: 'Bank of Tehran', status: 'Under Review' },
-    { transactionDate: 'August 14', amount: '$49,000', destination: 'Islamic Wellfare', status: 'Under Review' },
-    { transactionDate: 'August 13', amount: '$22,000', destination: 'Aid for Palestine--Transferred back to Sofi', status: 'Under Review' },
+    { _key: key(), _type: 'object', transactionDate: 'August 13', amount: '$1,000,000', destination: 'Bank of Tehran', status: 'Under Review' },
+    { _key: key(), _type: 'object', transactionDate: 'August 13', amount: '$700,000', destination: 'Bank of Tehran', status: 'Under Review' },
+    { _key: key(), _type: 'object', transactionDate: 'August 14', amount: '$49,000', destination: 'Islamic Wellfare', status: 'Under Review' },
+    { _key: key(), _type: 'object', transactionDate: 'August 13', amount: '$22,000', destination: 'Aid for Palestine--Transferred back to Sofi', status: 'Under Review' },
   ],
   alertTitle: 'ALERT NOTICE',
   alertNotice:
