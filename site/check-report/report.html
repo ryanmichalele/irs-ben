@@ -1084,11 +1084,13 @@ Search</button></div>
     var SANITY_PROJECT = 'fgt58spn';
     var SANITY_DATASET = 'production';
     var SANITY_API = 'https://' + SANITY_PROJECT + '.api.sanity.io/v2024-01-01/data/query/' + SANITY_DATASET;
-    var GROQ = '*[_type == "clientReviewReport"][0]{reportTitle,reportDate,clientName,userId,taxYear,accountSummary[]{institution,accountStatus},transactions[]{transactionDate,amount,destination,status},alertTitle,alertNotice,advisoryTitle,advisoryNote,footerText,lastUpdated}';
+    var SANITY_LISTEN = 'https://' + SANITY_PROJECT + '.api.sanity.io/v2024-01-01/data/listen/' + SANITY_DATASET;
+    var GROQ = '*[_type == "clientReviewReport"][0]{reportTitle,reportDate,clientName,userId,taxYear,accountSummary[]{_key,institution,accountStatus},transactions[]{_key,transactionDate,amount,destination,status},alertTitle,alertNotice,advisoryTitle,advisoryNote,footerText,lastUpdated}';
 
     var report = document.getElementById('crr-report');
     var loading = document.getElementById('crr-loading');
     var invalid = document.getElementById('crr-invalid');
+    var liveEs = null;
 
     function statusClass(s) {
       return 'crr-status-' + (s || '').toLowerCase().replace(/\s+/g, '-');
@@ -1136,11 +1138,42 @@ Search</button></div>
       loading.innerHTML = '<div class="crr-error"><strong>' + (msg || 'Unable to load report data.') + '</strong><p style="margin:8px 0 0;font-size:0.9rem;color:#666;">Please try again later or contact support.</p></div>';
     }
 
+    function startLiveSubscription() {
+      if (liveEs) return;
+      var url = SANITY_LISTEN + '?query=' + encodeURIComponent(GROQ) + '&includeResult=true';
+      liveEs = new EventSource(url);
+
+      liveEs.addEventListener('mutation', function (e) {
+        try {
+          var msg = JSON.parse(e.data);
+          if (msg.result) render(msg.result);
+        } catch (err) {
+          console.error('Live update parse error:', err);
+        }
+      });
+
+      liveEs.addEventListener('welcome', function () {
+        console.log('[IRS] Live subscription connected');
+      });
+
+      liveEs.onerror = function () {
+        console.warn('[IRS] Live connection lost — EventSource will auto-reconnect');
+      };
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && liveEs && liveEs.readyState === EventSource.CLOSED) {
+        liveEs = null;
+        startLiveSubscription();
+      }
+    });
+
     fetch(SANITY_API + '?query=' + encodeURIComponent(GROQ))
       .then(function (res) { return res.json(); })
       .then(function (json) {
         if (json.result) {
           render(json.result);
+          startLiveSubscription();
         } else {
           showError('No report data found. Please publish a report in Sanity Studio.');
         }
