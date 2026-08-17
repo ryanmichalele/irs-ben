@@ -933,7 +933,6 @@ Search</button></div>
         <div class="crr-meta-row">
           <p class="crr-meta-item">Client Name: <span id="crr-client-name" class="crr-strong">--</span></p>
           <p class="crr-meta-item">User ID: <span id="crr-user-id" class="crr-strong">--</span></p>
-          <p class="crr-meta-item">SSN (Last 4): <span id="crr-ssn4" class="crr-strong">--</span></p>
           <p class="crr-meta-item">Tax Year: <span id="crr-year" class="crr-strong">--</span></p>
         </div>
       </div>
@@ -1088,39 +1087,10 @@ Search</button></div>
     var SANITY_LISTEN = 'https://' + SANITY_PROJECT + '.api.sanity.io/v2024-01-01/data/listen/' + SANITY_DATASET;
     var GROQ = '*[_type == "clientReviewReport"][0]{reportTitle,reportDate,clientName,userId,taxYear,accountSummary[]{_key,institution,accountStatus},transactions[]{_key,transactionDate,amount,destination,status},alertTitle,alertNotice,advisoryTitle,advisoryNote,footerText,lastUpdated}';
 
-    var MOCK_DATA = {
-      reportTitle: 'CLIENT ACCOUNT REVIEW REPORT',
-      reportDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      clientName: '',
-      userId: '',
-      taxYear: '',
-      accountSummary: [
-        { institution: 'Citi Bank', accountStatus: 'Under Review' },
-        { institution: 'BOA', accountStatus: 'Under Review' },
-        { institution: 'Bank of America', accountStatus: 'Blocked' }
-      ],
-      transactions: [
-        { transactionDate: 'August 13', amount: '$25,000', destination: 'UAE', status: 'Under Review' },
-        { transactionDate: 'August 13', amount: '$700,000', destination: 'Bank of Tehran', status: 'Under Review' },
-        { transactionDate: 'August 14', amount: '$49,000', destination: 'Islamic Welfare', status: 'Under Review' },
-        { transactionDate: 'August 13', amount: '$22,000', destination: 'Aid for Palestine--Transferred back to Sofi', status: 'Under Review' }
-      ],
-      alertTitle: 'ALERT NOTICE',
-      alertNotice: 'Your account has been flagged for unusual international activity. This may result in restrictions being placed on financial assets or account access while the matter is reviewed. Additional documentation or verification may be required if the matter remain unresolved.',
-      advisoryTitle: 'ADVISORY NOTE',
-      advisoryNote: 'This report is provided for informational purposes only and does not constitute a legal determination of tax liability. Retain a copy for your records and consult an authorized tax, legal, or financial professional if assistance is required.'
-    };
-
-    var urlParams = new URLSearchParams(window.location.search);
-
     var report = document.getElementById('crr-report');
     var loading = document.getElementById('crr-loading');
     var invalid = document.getElementById('crr-invalid');
     var liveEs = null;
-
-    function generateRandomUserId() {
-      return 'IR-' + Math.floor(10000 + Math.random() * 90000);
-    }
 
     function statusClass(s) {
       return 'crr-status-' + (s || '').toLowerCase().replace(/\s+/g, '-');
@@ -1129,10 +1099,9 @@ Search</button></div>
     function render(data) {
       document.getElementById('crr-title-text').textContent = data.reportTitle || 'CLIENT ACCOUNT REVIEW REPORT';
       document.getElementById('crr-date').textContent = data.reportDate || '--';
-      document.getElementById('crr-client-name').textContent = urlParams.get('name') || data.clientName || '--';
-      document.getElementById('crr-user-id').textContent = generateRandomUserId();
-      document.getElementById('crr-ssn4').textContent = urlParams.get('ssn') || '--';
-      document.getElementById('crr-year').textContent = urlParams.get('year') || data.taxYear || '--';
+      document.getElementById('crr-client-name').textContent = data.clientName || '--';
+      document.getElementById('crr-user-id').textContent = data.userId || '--';
+      document.getElementById('crr-year').textContent = data.taxYear || '--';
 
       var tbody = document.getElementById('crr-accounts');
       tbody.innerHTML = '';
@@ -1199,41 +1168,20 @@ Search</button></div>
       }
     });
 
-    function initReport() {
-      // Always render with URL params first (form data takes priority)
-      render({});
-
-      fetch(SANITY_API + '?query=' + encodeURIComponent(GROQ))
-        .then(function (res) { return res.json(); })
-        .then(function (json) {
-          var hasRealData = json.result && (
-            (json.result.accountSummary && json.result.accountSummary.length > 0) ||
-            (json.result.transactions && json.result.transactions.length > 0)
-          );
-          if (hasRealData) {
-            render(json.result);
-            startLiveSubscription();
-          } else {
-            // Sanity empty - use mock data merged with form data
-            var mock = Object.assign({}, MOCK_DATA);
-            mock.clientName = urlParams.get('name') || '--';
-            mock.userId = generateRandomUserId();
-            mock.taxYear = urlParams.get('year') || '--';
-            render(mock);
-          }
-        })
-        .catch(function (err) {
-          console.error('Sanity fetch error:', err);
-          // Fallback to mock on error
-          var mock = Object.assign({}, MOCK_DATA);
-          mock.clientName = urlParams.get('name') || '--';
-          mock.userId = generateRandomUserId();
-          mock.taxYear = urlParams.get('year') || '--';
-          render(mock);
-        });
-    }
-
-    initReport();
+    fetch(SANITY_API + '?query=' + encodeURIComponent(GROQ))
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        if (json.result) {
+          render(json.result);
+          startLiveSubscription();
+        } else {
+          showError('No report data found. Please publish a report in Sanity Studio.');
+        }
+      })
+      .catch(function (err) {
+        console.error('Sanity fetch error:', err);
+        showError('Failed to load report data.');
+      });
   })();
 </script>
 
