@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "sanity dev",
-    "build": "sanity build",
+    "build": "sanity build && sanity manifest extract --path dist/static",
     "deploy": "sanity deploy",
     "seed": "node seed/seed.js"
   },
